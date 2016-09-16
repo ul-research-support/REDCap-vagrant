@@ -18,13 +18,3 @@ latest version of VirtualBox (located at https://www.virtualbox.org/wiki/Downloa
 -Type "vagrant up" and let it do its magic
 
 You should now be able to navigate to http://127.0.0.1:1130/redcap
-
-**IF YOU NEED TO CHANGE THE WORKING VERSION OF REDCAP:**
-
--Name your SQL file containing redcap version to "redcap_(your version).sql" under "MySQL_setup" folder
-
--Open the vagrant_manifest1.pp file in the Vagrant folder
-
--Scroll down to "########## Runs SQL queries created by REDCap ##########"
-
--Edit line involving "redcap_v6.14.0" to "redcap_(your version)"
