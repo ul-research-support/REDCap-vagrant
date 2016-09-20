@@ -62,7 +62,6 @@ define mysqldb ( $user, $password ) {
    }
 }
 
-
 class redcap::db {
   mysqldb { "redcap":
      user     => "ID_user",
@@ -77,20 +76,55 @@ exec { "flush":
   require => Class['redcap::db'],
 }
 
+define mysqlsetup1 {
+   exec { "run_sql_setup1":
+      command => "/usr/bin/mysql -u ID_user -pvagrant redcap < /var/www/html/MySQL_setup/install.sql",
+      path    => ["/usr/local/bin/:/var/www/html/MySQL_setup"],
+      require => Class["redcap::db"],
+   }
+}
 
-define mysqlsetup {
-   exec { "run_sql_setup":
-      command => "/usr/bin/mysql -u ID_user -pvagrant redcap < /var/www/html/MySQL_setup/sql_setup.sql",
+define mysqlsetup2 {
+   exec { "run_sql_setup2":
+      command => "/usr/bin/mysql -u ID_user -pvagrant redcap < /var/www/html/MySQL_setup/install_data.sql",
       path    => ["/usr/local/bin/:/var/www/html/MySQL_setup"],
       require => Class["redcap::db"],
    }
 }
 
 class redcap_sql_setup {
-   mysqlsetup { "redcap":
+   mysqlsetup1 { "redcap":
+   }
+   
+   mysqlsetup2 {"redcap":
    }
 }
 class {'redcap_sql_setup':}
+
+
+exec { "update-redcap-db":
+  command => "/usr/bin/mysql -u ID_user -pvagrant redcap -e \"UPDATE redcap_config SET value = 'sha512' WHERE field_name = 'password_algo';
+UPDATE redcap_config SET value = '' WHERE field_name = 'redcap_csrf_token';
+UPDATE redcap_config SET value = '0' WHERE field_name = 'superusers_only_create_project';
+UPDATE redcap_config SET value = '1' WHERE field_name = 'superusers_only_move_to_prod';
+UPDATE redcap_config SET value = '1' WHERE field_name = 'auto_report_stats';
+UPDATE redcap_config SET value = '' WHERE field_name = 'bioportal_api_token';
+UPDATE redcap_config SET value = 'http://127.0.0.1:1130/redcap/' WHERE field_name = 'redcap_base_url';
+UPDATE redcap_config SET value = '1' WHERE field_name = 'enable_url_shortener';
+UPDATE redcap_config SET value = 'D/M/Y_12' WHERE field_name = 'default_datetime_format';
+UPDATE redcap_config SET value = ',' WHERE field_name = 'default_number_format_decimal';
+UPDATE redcap_config SET value = '.' WHERE field_name = 'default_number_format_thousands_sep';
+UPDATE redcap_config SET value = 'REDCap Administrator (123-456-7890)' WHERE field_name = 'homepage_contact';
+UPDATE redcap_config SET value = 'email@yoursite.edu' WHERE field_name = 'homepage_contact_email';
+UPDATE redcap_config SET value = 'REDCap Administrator (123-456-7890)' WHERE field_name = 'project_contact_name';
+UPDATE redcap_config SET value = 'email@yoursite.edu' WHERE field_name = 'project_contact_email';
+UPDATE redcap_config SET value = 'SoAndSo University' WHERE field_name = 'institution';
+UPDATE redcap_config SET value = 'SoAndSo Institute for Clinical and Translational Research' WHERE field_name = 'site_org_type';
+UPDATE redcap_config SET value = '/var/www/html/redcap/hook_functions.php' WHERE field_name = 'hook_functions_file';
+UPDATE redcap_config SET value = '6.14.0' WHERE field_name = 'redcap_version';
+\"",
+  require => Class['redcap_sql_setup'],
+}
 
 #Installs php5 scripting language and necessary extensions
 class php5 {

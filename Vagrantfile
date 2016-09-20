@@ -5,7 +5,7 @@ Vagrant.configure("2") do |config|
 
    config.vm.synced_folder "C:/Users/Chris/Desktop/redcap", "/tmp/vagrant/redcap"
 
-   config.vm.synced_folder "C:/Users/Chris/Vagrant/MySQL_setup", "/tmp/vagrant/MySQL_setup"
+   config.vm.synced_folder "C:/Users/Chris/Desktop/redcap/redcap_v6.14.0/Resources/sql", "/tmp/vagrant/MySQL_setup"
 
    config.vm.provision :shell do |shell|
      shell.inline = "mkdir -p /etc/puppet/modules;
