@@ -6,7 +6,7 @@
 To use this software you will need the latest version of [Vagrant] (https://www.vagrantup.com/downloads.html) and the 
 latest version of [VirtualBox] (https://www.virtualbox.org/wiki/Downloads).
 
-1. Download the REDCap-vagrant ZIP file from gituhub and extract it to a folder named "Vagrant" under a User on your computer
+1. Download the REDCap-vagrant-master ZIP file from gituhub and extract it under a User on your computer
 
 2. Open the "Vagrantfile" that came with the downloaded folder
 
@@ -14,7 +14,7 @@ latest version of [VirtualBox] (https://www.virtualbox.org/wiki/Downloads).
 
 4. Change the beginning directory and version number of your REDcap folder in "**C:/Users/Chris/Desktop**/redcap/redcap_v**6.14.0**/Resources/sql"
 
-5. Open your Command Prompt or Terminal, and change your directory to the project root (example: `cd Users/Chris/Vagrant`)
+5. Open your Command Prompt or Terminal, and change your directory to the project root (example: `cd Users/Chris/REDCap-vagrant-master`)
 
 6. Type `vagrant up` and let it do it's magic
 
