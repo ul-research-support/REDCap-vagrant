@@ -14,7 +14,11 @@ latest version of [VirtualBox] (https://www.virtualbox.org/wiki/Downloads).
 
 4. Change the beginning directory and version number of your REDcap folder in "**C:/Users/Chris/Desktop**/redcap/redcap_v**6.14.0**/Resources/sql"
 
-5. Open your Command Prompt or Terminal, and change your directory to the project root (example: `cd Users/Chris/REDCap-vagrant-master`)
+5. Open your Command Prompt or Terminal, and change your directory to the project root 
+
+      Windows: `cd Users/(your name)/REDCap-vagrant-master`
+
+      Mac OSX / Linux: `cd ~/REDCap-vagrant-master`
 
 6. Type `vagrant up` and let it do it's magic
 
