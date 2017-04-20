@@ -121,7 +121,7 @@ UPDATE redcap_config SET value = 'email@yoursite.edu' WHERE field_name = 'projec
 UPDATE redcap_config SET value = 'SoAndSo University' WHERE field_name = 'institution';
 UPDATE redcap_config SET value = 'SoAndSo Institute for Clinical and Translational Research' WHERE field_name = 'site_org_type';
 UPDATE redcap_config SET value = '/var/www/html/redcap/hook_functions.php' WHERE field_name = 'hook_functions_file';
-UPDATE redcap_config SET value = '6.14.0' WHERE field_name = 'redcap_version';
+UPDATE redcap_config SET value = '7.0.11' WHERE field_name = 'redcap_version';
 \"",
   require => Class['redcap_sql_setup'],
 }
