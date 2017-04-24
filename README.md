@@ -3,8 +3,8 @@
 #### The Vagrantfile and Puppet manifests provided in this repository will allow you to create a virtual machine to run the REDCap database.
 
 ### Installation instructions:
-To use this software you will need the latest version of [Vagrant] (https://www.vagrantup.com/downloads.html) and the 
-latest version of [VirtualBox] (https://www.virtualbox.org/wiki/Downloads).
+To use this software you will need the latest version of [Vagrant](https://www.vagrantup.com/downloads.html) and the 
+latest version of [VirtualBox](https://www.virtualbox.org/wiki/Downloads).
 
 1. Download the REDCap-vagrant-master ZIP file from gituhub and extract it under a User on your computer
 
