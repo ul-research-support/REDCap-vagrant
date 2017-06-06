@@ -1,23 +1,19 @@
 ## Vagrant VM for REDCap
 ![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.803357.svg)
 
-#### The Vagrantfile and Puppet manifests provided in this repository will allow you to create a virtual machine to run the REDCap database.
+#### The Vagrantfile and Puppet manifests provided in this repository will allow you to create a virtual machine to run a fully-functional REDCap instance.
 
 ### Installation instructions:
 To use this software you will need the latest version of [Vagrant](https://www.vagrantup.com/downloads.html) and the 
 latest version of [VirtualBox](https://www.virtualbox.org/wiki/Downloads).
 
-1. Download the REDCap-vagrant-master ZIP file from GitHub and extract it under a User on your computer
+1. Download the REDCap-vagrant-master ZIP file from GitHub and extract it on your computer
 
 2. Open the "Vagrantfile" that came with the downloaded folder
 
-3. Place your REDCap installation folder in the REDCap-vagrant-master folder and change the Vagrantfile to match your REDCap folder version
+3. Place your REDCap installation folder in your newly-downloaded REDCap-vagrant-master folder and change the Vagrantfile to match your REDCap folder version
 
 4. Open your Command Prompt or Terminal, and change your directory to the project root 
-
-      Windows: `cd Users/(your name)/REDCap-vagrant-master`
-
-      Mac OSX / Linux: `cd ~/REDCap-vagrant-master`
 
 5. Type `vagrant up` and let it do it's magic
 
