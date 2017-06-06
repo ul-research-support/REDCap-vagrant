@@ -7,11 +7,11 @@
 To use this software you will need the latest version of [Vagrant](https://www.vagrantup.com/downloads.html) and the 
 latest version of [VirtualBox](https://www.virtualbox.org/wiki/Downloads).
 
-1. Download the REDCap-vagrant-master ZIP file from gituhub and extract it under a User on your computer
+1. Download the REDCap-vagrant-master ZIP file from GitHub and extract it under a User on your computer
 
 2. Open the "Vagrantfile" that came with the downloaded folder
 
-3. Place your redcap folder in the REDCap-vagrant-master folder and change the Vagrantfile to match your REDCap folder version
+3. Place your REDCap installation folder in the REDCap-vagrant-master folder and change the Vagrantfile to match your REDCap folder version
 
 4. Open your Command Prompt or Terminal, and change your directory to the project root 
 
