@@ -1,5 +1,5 @@
 ## Vagrant VM for REDCap
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.803357.svg)](http://dx.doi.org/10.5281/zenodo.803357)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.814023.svg)](http://dx.doi.org/10.5281/zenodo.814023)
 
 #### The Vagrantfile and Puppet manifests provided in this repository will allow you to create a virtual machine to run a fully-functional REDCap instance.
 
