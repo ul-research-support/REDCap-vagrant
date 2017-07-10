@@ -9,13 +9,11 @@ latest version of [VirtualBox](https://www.virtualbox.org/wiki/Downloads).
 
 1. Download the REDCap-vagrant-master ZIP file from GitHub and extract it on your computer
 
-2. Open the "Vagrantfile" that came with the downloaded folder
+2. Place your REDCap installation folder in your newly-downloaded REDCap-vagrant-master folder and change the Vagrantfile to match your REDCap folder version
 
-3. Place your REDCap installation folder in your newly-downloaded REDCap-vagrant-master folder and change the Vagrantfile to match your REDCap folder version
+3. Open your Command Prompt or Terminal, and change your directory to the project root 
 
-4. Open your Command Prompt or Terminal, and change your directory to the project root 
-
-5. Type `vagrant up` and let it do it's magic
+4. Type `vagrant up` and let it do it's magic
 
 Vagrant will download the base box and run the Puppet provisioner to install Apache2, MySQL, PHP, necessary extensions, as well as set up the REDCap database users and tables.
 
