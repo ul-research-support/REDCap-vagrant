@@ -53,16 +53,6 @@ Vagrant.configure("2") do |config|
    end
 
    if File.exists?(PASSWORD_ID_PATH)
-     config.vm.provision :shell do |shell|
-       shell.inline = "mkdir -p /etc/puppet/modules;
-                       puppet module install puppetlabs/stdlib"
-     end
-
-     config.vm.provision "puppet" do |puppet|
-       puppet.manifests_path = "manifests"
-       puppet.manifest_file = "manifest.pp"
-     end
-
      config.vm.network "forwarded_port", guest: 80, host: 1130
    end
 end
