@@ -8,3 +8,4 @@ HDD_UUID=`VBoxManage showvminfo redcap-secure | grep 'SATA.*UUID' | sed 's/^.*UU
 USERNAME="redcap_user"
 VBoxManage encryptmedium $HDD_UUID --newpassword - --newpasswordid $USERNAME --cipher "AES-XTS256-PLAIN64"
 echo $USERNAME > .password_id
+vagrant up
