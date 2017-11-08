@@ -1,7 +1,7 @@
 #!/bin/bash
 # You must install the Oracle VM VirtualBox Extension Pack for drive encryption
 vagrant plugin install vagrant-vbguest
-vagrant plugin instal vagrant-triggers
+vagrant plugin install vagrant-triggers
 vagrant up
 vagrant suspend
 HDD_UUID=`VBoxManage showvminfo redcap-secure | grep 'SATA.*UUID' | sed 's/^.*UUID: \(.*\))/\1/'`
