@@ -1,52 +1,68 @@
+PASSWORD_PATH = ".password"
+PASSWORD_ID_PATH = ".password_id"
+
+# You must install the Oracle VM VirtualBox Extension Pack for drive encryption
+# Credit for drive encryption in Ruby goes to GitHub user gabrielelana
+# Make sure to have installed vagrant-triggers plugin
+# > vagrant plugin install vagrant-triggers
+# After the first `vagrant up` stop the VM and execute the following steps
+# Take the identifier of the storage you want to encrypt
+# > HDD_UUID=`VBoxManage showvminfo <VM_NAME> | grep 'SATA.*UUID' | sed 's/^.*UUID: \(.*\))/\1/'`
+# Store your usernname (whitespaces are not allowed) in a variable
+# > USERNAME="<YOUR_USER_NAME_WITHOUT_WHITESPACES>"
+# Encrypt the storage, enter the password when asked
+# > VBoxManage encryptmedium $HDD_UUID --newpassword - --newpasswordid $USERNAME --cipher "AES-XTS256-PLAIN64"
+# Store the username in a file named .password_id
+# > echo $USERNAME > .password_id
+# Now, the next time you start the VM you'll be asked for the same password
 
 Vagrant.configure("2") do |config|
- 
+
    config.vm.box = "ubuntu/trusty64"
+   config.vm.box_check_update = false
+   config.vm.hostname = "redcap-secure"
 
-   config.vm.synced_folder "../redcap7.0.11/redcap", "/tmp/vagrant/redcap"
-
-   config.vm.synced_folder "../redcap7.0.11/redcap/redcap_v7.0.11/Resources/sql", "/tmp/vagrant/MySQL_setup"
-
-   config.vm.provision :shell do |shell|
-     shell.inline = "mkdir -p /etc/puppet/modules;
-                     puppet module install puppetlabs/stdlib"
+   config.trigger.before :up do
+     if File.exists?(PASSWORD_ID_PATH)
+       password_id = File.read(PASSWORD_ID_PATH).strip
+       print "The VM is encrypted, please enter the password\n#{password_id}: "
+       password = STDIN.noecho(&:gets).strip
+       File.write(PASSWORD_PATH, password)
+       puts ""
+     end
    end
 
-   config.vm.provision "puppet" do |puppet|
-     puppet.manifests_path = "manifests"
-     puppet.manifest_file = "vagrant_manifest1.pp"
-   end
-  
-   config.vm.provision :shell do |shell|
-     shell.inline = "sudo cp -R /tmp/vagrant/redcap /var/www/html"
+   config.trigger.after :up do
+     File.delete(PASSWORD_PATH) if File.exists?(PASSWORD_PATH)
    end
 
-   config.vm.provision "puppet" do |puppet|
-     puppet.manifests_path = "manifests"
-     puppet.manifest_file = "vagrant_manifest2.pp"
+   config.trigger.after :destroy do
+     File.delete(PASSWORD_ID_PATH) if File.exists?(PASSWORD_ID_PATH)
    end
 
-   config.vm.network "forwarded_port", guest: 80, host: 1130
+   config.vm.provider :virtualbox do |vb|
+     vb.name = "redcap-secure"
+     vb.gui = false
 
-  # config.vm.box_check_update = false
+     if File.exists?(PASSWORD_ID_PATH)
+       password_id = File.read(PASSWORD_ID_PATH).strip
+       vb.customize "post-boot", [
+         "controlvm", :id, "addencpassword", password_id, PASSWORD_PATH, "--removeonsuspend", "yes"
+       ]
+     end
+   end
 
-  # Create a private network, which allows host-only access to the machine
-  # using a specific IP.
-  # config.vm.network "private_network", ip: "192.168.33.10"
+   if File.exists?(PASSWORD_ID_PATH)
+     config.vm.provision :shell do |shell|
+       shell.inline = "mkdir -p /etc/puppet/modules;
+                       puppet module install puppetlabs/stdlib"
+     end
 
-  # Create a public network, which generally matched to bridged network.
-  # Bridged networks make the machine appear as another physical device on
-  # your network.
-  # config.vm.network "public_network"
+     config.vm.provision "puppet" do |puppet|
+       puppet.manifests_path = "manifests"
+       puppet.manifest_file = "manifest.pp"
+     end
 
-  # Share an additional folder to the guest VM. 
-
- # config.vm.provider "virtualbox" do |vb|
-  #   # Display the VirtualBox GUI when booting the machine
-  #   vb.gui = true
-  
-     # Customize the amount of memory on the VM:
-  #   vb.memory = "1024"
-  # end
-
+     config.vm.network "forwarded_port", guest: 80, host: 1130
+   end
 end
