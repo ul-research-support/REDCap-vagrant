@@ -1,17 +1,17 @@
 #Puppet Manifest for REDCap
 
 #Updates each package to latest version as it's installed
-exec { "yum update":
-   command => "/usr/bin/yum update",
+exec { "apt-get update":
+   command => "/usr/bin/apt-get update",
 }
 
-Exec["yum update"] -> Package <| |>
+Exec["apt-get update"] -> Package <| |>
 
 #Installs and runs apache2 web server
 class apache2 {
    package { 'apache2':
       ensure  => present,
-      require => Exec["yum update"],
+      require => Exec["apt-get update"],
    }
 
    service { 'apache2':
@@ -28,7 +28,7 @@ class extraction {
        require => Package['apache2'],
     }
 	exec { "extract":
-	   command => "unzip redcap*.zip -d /var/www/html",
+	   command => "unzip /vagrant/redcap*.zip -d /var/www/html",
 	   path => ["/usr/bin", "/bin"],
 	   require => Package['unzip'],
 	}
@@ -140,12 +140,6 @@ class php {
       ensure => present,
       require => Package['php'],
    }
-   exec { 'repo_fix':
-	   command => "wget http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm && rpm -Uvh epel-release-6*.rpm",
-	   path => ["/usr/bin", "/bin"],
-	   require => Package['php'],
-	   before => Package['php-mcrypt'],
-    }
    package {'php-mcrypt':
       ensure => latest,
       require => Package['php'],
