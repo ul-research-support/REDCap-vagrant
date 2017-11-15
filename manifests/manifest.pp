@@ -23,22 +23,26 @@ class {'apache2':}
 
 #Initial extraction of REDCap installation files
 class extraction {
-    $redcap_version = inline_template("<%= `cd /var/www/html/redcap*; result=${PWD##*/}; echo $result | awk -F"v" '{ print $2 }'` %>")}
+    #$redcap_version = inline_template("<%= `cd /var/www/html/redcap*; result=${PWD##*/}; echo $result | awk -F\"v\" '{ print $2 }'` %>")
     package { 'unzip':
        ensure => present,
        require => Package['apache2'],
     }
-	exec { "extract":
-	   command => "unzip /vagrant/redcap*.zip -d /var/www/html",
-	   path => ["/usr/bin", "/bin"],
-	   require => Package['unzip'],
-	}
+  exec { "extract":
+     command => "unzip /vagrant/redcap*.zip -d /var/www/html",
+     path => ["/usr/bin", "/bin"],
+     require => Package['unzip'],
+  }
   exec { "move":
      command => "cp -R /var/www/html/redcap7.0.15/redcap /var/www/html && rm -rf /var/www/html/redcap7.0.15",
      path => ["/usr/bin", "/bin"],
-     require => Exec['extract'],
+     require => Exec['redcap-version'],
   }
-     
+  exec { "redcap-version":
+    command => "cd /var/www/html/redcap*; redcap_version=\${PWD##*/}; echo \$redcap_version | awk -F\"p\" '{ print $2 }'",
+    path => ["/usr/bin", "/bin/cd"],
+    require => Exec['extract'],
+  }
 }
 class {'extraction':}
 
@@ -142,10 +146,10 @@ class php {
       require => Package['php5'],
    }
    # exec { 'repo_fix':
-	  #  command => "wget http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm && rpm -Uvh epel-release-6*.rpm",
-	  #  path => ["/usr/bin", "/bin"],
-	  #  require => Package['php'],
-	  #  before => Package['php-mcrypt'],
+    #  command => "wget http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm && rpm -Uvh epel-release-6*.rpm",
+    #  path => ["/usr/bin", "/bin"],
+    #  require => Package['php'],
+    #  before => Package['php-mcrypt'],
     #}
    package {'php5-mcrypt':
       ensure => latest,
@@ -204,52 +208,52 @@ add_max_input_vars {
 
 #These credential setups automate the connection to the database server without asking for login information
 class credentials {
-	exec {'credential_setup1':
-	  command => 'echo "\$hostname = \'localhost\';" >>/var/www/html/redcap/database.php',
-	  path => ["/usr/bin", "/bin/"],
-	  require => Class['redcap_sql_setup'],
-	}
-	exec {'credential_setup2':
-	  command => 'echo "\$db = \'redcap\';" >>/var/www/html/redcap/database.php',
-	  path => ["/usr/bin", "/bin/"],
-	  require => Class['redcap_sql_setup'],
-	}
-	exec {'credential_setup3':
-	  command => 'echo "\$username = \'redcap_user\';" >>/var/www/html/redcap/database.php',
-	  path => ["/usr/bin", "/bin/"],
-	  require => Class['redcap_sql_setup'],
-	}
-	exec {'credential_setup4':
-	  command => 'echo "\$password = \'Medcenter140b\';" >>/var/www/html/redcap/database.php',
-	  path => ["/usr/bin", "/bin/"],
-	  require => Class['redcap_sql_setup'],
-	}
-	exec {'credential_setup5':
-	  command => 'echo "\$salt = \'hard#hat\';" >>/var/www/html/redcap/database.php',
-	  path => ["/usr/bin", "/bin/"],
-	  require => Class['redcap_sql_setup'],
-	}
+  exec {'credential_setup1':
+    command => 'echo "\$hostname = \'localhost\';" >>/var/www/html/redcap/database.php',
+    path => ["/usr/bin", "/bin/"],
+    require => Class['redcap_sql_setup'],
+  }
+  exec {'credential_setup2':
+    command => 'echo "\$db = \'redcap\';" >>/var/www/html/redcap/database.php',
+    path => ["/usr/bin", "/bin/"],
+    require => Class['redcap_sql_setup'],
+  }
+  exec {'credential_setup3':
+    command => 'echo "\$username = \'redcap_user\';" >>/var/www/html/redcap/database.php',
+    path => ["/usr/bin", "/bin/"],
+    require => Class['redcap_sql_setup'],
+  }
+  exec {'credential_setup4':
+    command => 'echo "\$password = \'Medcenter140b\';" >>/var/www/html/redcap/database.php',
+    path => ["/usr/bin", "/bin/"],
+    require => Class['redcap_sql_setup'],
+  }
+  exec {'credential_setup5':
+    command => 'echo "\$salt = \'hard#hat\';" >>/var/www/html/redcap/database.php',
+    path => ["/usr/bin", "/bin/"],
+    require => Class['redcap_sql_setup'],
+  }
 }
 class{'credentials':}
 #These commands configure the REDCap server
 class chown {
-	exec {'chown_temp':
-	  command => 'chown -R www:www/var/www/html/redcap/temp',
-	  path    => '/usr/local/bin/:/bin/',
-	  require => Class['credentials'],
-	}
+  exec {'chown_temp':
+    command => 'chown -R www:www/var/www/html/redcap/temp',
+    path    => '/usr/local/bin/:/bin/',
+    require => Class['credentials'],
+  }
 
-	exec {'chown_edocs':
-	  command => 'chown -R www:www /var/www/html/redcap/edocs',
-	  path    => '/usr/local/bin/:/bin/',
-	  require => Class['credentials'],
-	}
+  exec {'chown_edocs':
+    command => 'chown -R www:www /var/www/html/redcap/edocs',
+    path    => '/usr/local/bin/:/bin/',
+    require => Class['credentials'],
+  }
 
-	exec {'crontab_setup':
-	   command => 'crontab -l 2>/dev/null; echo "* * * * * /usr/bin/php /var/www/html/redcap/cron.php" | crontab -',
-	   path    => ["/usr/bin","/bin", "/usr/sbin", "/sbin"],
-	   require => Class['credentials'],
-	}
+  exec {'crontab_setup':
+     command => 'crontab -l 2>/dev/null; echo "* * * * * /usr/bin/php /var/www/html/redcap/cron.php" | crontab -',
+     path    => ["/usr/bin","/bin", "/usr/sbin", "/sbin"],
+     require => Class['credentials'],
+  }
 }
 class{'chown':}
 
