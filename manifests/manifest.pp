@@ -7,50 +7,20 @@ exec { "apt-get update":
 
 Exec["apt-get update"] -> Package <| |>
 
-#Installs and runs apache2 web server
-class apache2 {
-   package { 'apache2':
-      ensure  => present,
-      require => Exec["apt-get update"],
-   }
-
-   service { 'apache2':
-      ensure  => "running",
-      require => Package["apache2"],
-   }
-}
-class {'apache2':}
-
-#Initial extraction of REDCap installation files
-class extraction {
-    #$redcap_version = inline_template("<%= `cd /var/www/html/redcap*; result=${PWD##*/}; echo $result | awk -F\"v\" '{ print $2 }'` %>")
-    package { 'unzip':
-       ensure => present,
-       require => Package['apache2'],
-    }
-  exec { "extract":
-     command => "unzip /vagrant/redcap*.zip -d /var/www/html",
-     path => ["/usr/bin", "/bin"],
-     require => Package['unzip'],
+class apache {
+  package {'apache2':
+    ensure => latest,
   }
-  exec { "move":
-     command => "cp -R /var/www/html/redcap7.0.15/redcap /var/www/html && rm -rf /var/www/html/redcap7.0.15",
-     path => ["/usr/bin", "/bin"],
-     require => Exec['redcap-version'],
-  }
-  exec { "redcap-version":
-    command => "cd /var/www/html/redcap*; redcap_version=\${PWD##*/}; echo \$redcap_version | awk -F\"p\" '{ print $2 }'",
-    path => ["/usr/bin", "/bin/cd"],
-    require => Exec['extract'],
+
+  service {'apache2':
+    ensure => running
   }
 }
-class {'extraction':}
-
+class {'apache':}
 #Installs and runs MySQL, sets password, and moves SQL queries to VM
 class mysql::server {
    package {'mysql-server':
        ensure => latest,
-       require => Class['extraction'],
    }
 
    service {'mysql':
@@ -130,7 +100,6 @@ UPDATE redcap_config SET value = 'D/M/Y_12' WHERE field_name = 'default_datetime
 UPDATE redcap_config SET value = ',' WHERE field_name = 'default_number_format_decimal';
 UPDATE redcap_config SET value = '.' WHERE field_name = 'default_number_format_thousands_sep';
 UPDATE redcap_config SET value = '/var/www/html/redcap/hook_functions.php' WHERE field_name = 'hook_functions_file';
-UPDATE redcap_config SET value = '7.0.15' WHERE field_name = 'redcap_version';
 \"",
   require => Class['redcap_sql_setup'],
   subscribe => [Service['apache2'], Service['mysql']],
@@ -145,33 +114,15 @@ class php {
       ensure => present,
       require => Package['php5'],
    }
-   # exec { 'repo_fix':
-    #  command => "wget http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm && rpm -Uvh epel-release-6*.rpm",
-    #  path => ["/usr/bin", "/bin"],
-    #  require => Package['php'],
-    #  before => Package['php-mcrypt'],
-    #}
    package {'php5-mcrypt':
       ensure => latest,
       require => Package['php5'],
-      subscribe => Service['apache2'],
+      notify => Service['apache2'],
    }
    package {'php5-gd':
       ensure => latest,
       require => Package['php5'],
    }
-   # package {'php5-dom':
-   #    ensure => latest,
-   #    require => Package['php5'],
-   # }
-   # package {'php5-xml':
-   #    ensure => latest,
-   #    require => Class['chown'],
-   # }
-   # package {'php5-mbstring':
-   #    ensure => latest,
-   #    require => Package['php5'],
-   #}
    file {'/var/www/html/info.php':
       ensure => file,
       content => '<?php phpinfo(); ?>',
@@ -182,11 +133,11 @@ class {'php':}
 
 #Sets different paramaters in php.ini file to certain values needed for REDCap integration
 define set_php_var($value) {
-  exec { "sed -i 's/^;*[[:space:]]*$name[[:space:]]*=.*$/$name = $value/g' /etc/php.ini":
+  exec { "sed -i 's/^;*[[:space:]]*$name[[:space:]]*=.*$/$name = $value/g' /etc/php5/apache2/php.ini":
     unless  => "grep -xqe '$name[[:space:]]*=[[:space:]]*$value' -- /etc/php.ini",
     path    => "/bin:/usr/bin",
-    require => Package[php5],
-    notify  => Service[apache2];
+    require => Package['php5'],
+    notify  => Service['apache2'];
   }
 }
 set_php_var {
@@ -196,10 +147,10 @@ set_php_var {
 }
 
 define add_max_input_vars($value) {
-  exec { "echo '$name = $value' >> /etc/php.ini":
+  exec { "echo '$name = $value' >> /etc/php5/apache2/php.ini":
     path => "/bin:/usr/bin",
-    require => Package[php5],
-    notify => Service[apache2];
+    require => Package['php5'],
+    notify => Service['apache2'];
     }
 }
 add_max_input_vars {
@@ -224,7 +175,7 @@ class credentials {
     require => Class['redcap_sql_setup'],
   }
   exec {'credential_setup4':
-    command => 'echo "\$password = \'Medcenter140b\';" >>/var/www/html/redcap/database.php',
+    command => 'echo "\$password = \'redcapDBpassword\';" >>/var/www/html/redcap/database.php',
     path => ["/usr/bin", "/bin/"],
     require => Class['redcap_sql_setup'],
   }
@@ -238,13 +189,13 @@ class{'credentials':}
 #These commands configure the REDCap server
 class chown {
   exec {'chown_temp':
-    command => 'chown -R www:www/var/www/html/redcap/temp',
+    command => 'chown -R www-data:www-data /var/www/html/redcap/temp',
     path    => '/usr/local/bin/:/bin/',
     require => Class['credentials'],
   }
 
   exec {'chown_edocs':
-    command => 'chown -R www:www /var/www/html/redcap/edocs',
+    command => 'chown -R www-data:www-data /var/www/html/redcap/edocs',
     path    => '/usr/local/bin/:/bin/',
     require => Class['credentials'],
   }
