@@ -21,27 +21,6 @@ Vagrant.configure("2") do |config|
    config.vm.box = "ubuntu/trusty64"
    config.vm.box_check_update = false
    config.vm.hostname = "redcap-secure"
-   config.vm.network "forwarded_port", guest: 80, host: 1130
-   # config.vm.provider :virtualbox do |vb|
-   #  vb.name = "redcap-secure"
-   #  vb.gui = false
-   # end
-   # config.vm.provision :shell do |shell|
-   #  shell.inline = "sudo apt-get update -y
-   #                  sudo apt-get upgrade -y
-   #                  sudo mkdir -p /etc/puppet/modules
-   #                  sudo puppet module install puppetlabs/stdlib
-   #                  sudo apt-get install apache2 -y
-   #                  sudo apt-get install unzip -y
-   #                  sudo unzip /vagrant/redcap*.zip -d /var/www/html
-   #                  cd /var/www/html/redcap*; r_v=${PWD##*/}; redcap_version=$(echo $r_v | awk -F\"p\" '{ print $2 }')
-   #                  echo $redcap_version > /vagrant/rv.txt
-   #                  cd /var/www/html
-   #                  sudo cp -R /var/www/html/redcap${redcap_version}/redcap /var/www/html && rm -rf /var/www/html/redcap${redcap_version}
-   #                  sudo puppet apply /vagrant/manifests/manifest.pp
-   #                  redcap_version=$(cat /vagrant/rv.txt)
-   #                  /usr/bin/mysql -u redcap_user -predcapDBpassword redcap -e \"UPDATE redcap_config SET value = '${redcap_version}' WHERE field_name = 'redcap_version' \""
-   # end
    config.trigger.before :up do
      if File.exists?(PASSWORD_ID_PATH)
        password_id = File.read(PASSWORD_ID_PATH).strip
