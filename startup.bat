@@ -5,7 +5,7 @@ vagrant plugin install vagrant-vbguest
 vagrant plugin install vagrant-triggers
 vagrant up
 vagrant halt
-powershell -command "cat \"C:\Users\%HOST_USERNAME%\VirtualBox VMs\redcap-secure\redcap-secure.vbox\" | findstr /l \"<HardDisk uuid=\""
+powershell -command "cat C:/Users/%HOST_USERNAME%/'VirtualBox VMs'/redcap-secure/redcap-secure.vbox" | findstr /l "<Image uuid="
 @echo off
 set /p HDD_UUID="Enter Hard Disk UUID - not Machine uuid: "
 SET USERNAME="redcap_user"
