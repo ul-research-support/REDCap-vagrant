@@ -61,49 +61,49 @@ exec { "flush":
   require => Class['redcap::db'],
 }
 
-define mysqlsetup1 {
-   exec { "run_sql_setup1":
-      command => "/usr/bin/mysql -u redcap_user -predcapDBpassword redcap < /var/www/html/redcap/redcap_v7.0.15/Resources/sql/install.sql",
-      path    => ["/usr/local/bin/:/var/www/html/redcap/redcap_v*/Resources/sql"],
-      require => Exec['flush'],
-   }
-}
+# define mysqlsetup1 {
+#    exec { "run_sql_setup1":
+#       command => "/usr/bin/mysql -u redcap_user -predcapDBpassword redcap < /var/www/html/redcap/redcap_v7.0.15/Resources/sql/install.sql",
+#       path    => ["/usr/local/bin/:/var/www/html/redcap/redcap_v*/Resources/sql"],
+#       require => Exec['flush'],
+#    }
+# }
 
-define mysqlsetup2 {
-   exec { "run_sql_setup2":
-      command => "/usr/bin/mysql -u redcap_user -predcapDBpassword redcap < /var/www/html/redcap/redcap_v7.0.15/Resources/sql/install_data.sql",
-      path    => ["/usr/local/bin/:/var/www/html/redcap/redcap_v*/Resources/sql"],
-      require => Exec['flush'],
-   }
-}
+# define mysqlsetup2 {
+#    exec { "run_sql_setup2":
+#       command => "/usr/bin/mysql -u redcap_user -predcapDBpassword redcap < /var/www/html/redcap/redcap_v7.0.15/Resources/sql/install_data.sql",
+#       path    => ["/usr/local/bin/:/var/www/html/redcap/redcap_v*/Resources/sql"],
+#       require => Exec['flush'],
+#    }
+# }
 
-class redcap_sql_setup {
-   mysqlsetup1 { "redcap":
-   }
+# class redcap_sql_setup {
+#    mysqlsetup1 { "redcap":
+#    }
 
-   mysqlsetup2 {"redcap":
-   }
-}
-class {'redcap_sql_setup':}
+#    mysqlsetup2 {"redcap":
+#    }
+# }
+# class {'redcap_sql_setup':}
 
 
-exec { "update-redcap-db":
-  command => "/usr/bin/mysql -u redcap_user -predcapDBpassword redcap -e \"UPDATE redcap_config SET value = 'sha512' WHERE field_name = 'password_algo';
-UPDATE redcap_config SET value = '' WHERE field_name = 'redcap_csrf_token';
-UPDATE redcap_config SET value = '0' WHERE field_name = 'superusers_only_create_project';
-UPDATE redcap_config SET value = '1' WHERE field_name = 'superusers_only_move_to_prod';
-UPDATE redcap_config SET value = '1' WHERE field_name = 'auto_report_stats';
-UPDATE redcap_config SET value = '' WHERE field_name = 'bioportal_api_token';
-UPDATE redcap_config SET value = 'http://127.0.0.1:1130/redcap/' WHERE field_name = 'redcap_base_url';
-UPDATE redcap_config SET value = '1' WHERE field_name = 'enable_url_shortener';
-UPDATE redcap_config SET value = 'D/M/Y_12' WHERE field_name = 'default_datetime_format';
-UPDATE redcap_config SET value = ',' WHERE field_name = 'default_number_format_decimal';
-UPDATE redcap_config SET value = '.' WHERE field_name = 'default_number_format_thousands_sep';
-UPDATE redcap_config SET value = '/var/www/html/redcap/hook_functions.php' WHERE field_name = 'hook_functions_file';
-\"",
-  require => Class['redcap_sql_setup'],
-  subscribe => [Service['apache2'], Service['mysql']],
-}
+# exec { "update-redcap-db":
+#   command => "/usr/bin/mysql -u redcap_user -predcapDBpassword redcap -e \"UPDATE redcap_config SET value = 'sha512' WHERE field_name = 'password_algo';
+# UPDATE redcap_config SET value = '' WHERE field_name = 'redcap_csrf_token';
+# UPDATE redcap_config SET value = '0' WHERE field_name = 'superusers_only_create_project';
+# UPDATE redcap_config SET value = '1' WHERE field_name = 'superusers_only_move_to_prod';
+# UPDATE redcap_config SET value = '1' WHERE field_name = 'auto_report_stats';
+# UPDATE redcap_config SET value = '' WHERE field_name = 'bioportal_api_token';
+# UPDATE redcap_config SET value = 'http://127.0.0.1:1130/redcap/' WHERE field_name = 'redcap_base_url';
+# UPDATE redcap_config SET value = '1' WHERE field_name = 'enable_url_shortener';
+# UPDATE redcap_config SET value = 'D/M/Y_12' WHERE field_name = 'default_datetime_format';
+# UPDATE redcap_config SET value = ',' WHERE field_name = 'default_number_format_decimal';
+# UPDATE redcap_config SET value = '.' WHERE field_name = 'default_number_format_thousands_sep';
+# UPDATE redcap_config SET value = '/var/www/html/redcap/hook_functions.php' WHERE field_name = 'hook_functions_file';
+# \"",
+#   require => Class['redcap_sql_setup'],
+#   subscribe => [Service['apache2'], Service['mysql']],
+# }
 
 #Installs php5 scripting language and necessary extensions
 class php {
@@ -162,27 +162,27 @@ class credentials {
   exec {'credential_setup1':
     command => 'echo "\$hostname = \'localhost\';" >>/var/www/html/redcap/database.php',
     path => ["/usr/bin", "/bin/"],
-    require => Class['redcap_sql_setup'],
+    require => Class['redcap::db'],
   }
   exec {'credential_setup2':
     command => 'echo "\$db = \'redcap\';" >>/var/www/html/redcap/database.php',
     path => ["/usr/bin", "/bin/"],
-    require => Class['redcap_sql_setup'],
+    require => Class['redcap::db'],
   }
   exec {'credential_setup3':
     command => 'echo "\$username = \'redcap_user\';" >>/var/www/html/redcap/database.php',
     path => ["/usr/bin", "/bin/"],
-    require => Class['redcap_sql_setup'],
+    require => Class['redcap::db'],
   }
   exec {'credential_setup4':
     command => 'echo "\$password = \'redcapDBpassword\';" >>/var/www/html/redcap/database.php',
     path => ["/usr/bin", "/bin/"],
-    require => Class['redcap_sql_setup'],
+    require => Class['redcap::db'],
   }
   exec {'credential_setup5':
     command => 'echo "\$salt = \'hard#hat\';" >>/var/www/html/redcap/database.php',
     path => ["/usr/bin", "/bin/"],
-    require => Class['redcap_sql_setup'],
+    require => Class['redcap::db'],
   }
 }
 class{'credentials':}
