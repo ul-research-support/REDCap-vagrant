@@ -1,0 +1,13 @@
+UPDATE redcap_config SET value = 'sha512' WHERE field_name = 'password_algo';
+UPDATE redcap_config SET value = '' WHERE field_name = 'redcap_csrf_token';
+UPDATE redcap_config SET value = '0' WHERE field_name = 'superusers_only_create_project';
+UPDATE redcap_config SET value = '1' WHERE field_name = 'superusers_only_move_to_prod';
+UPDATE redcap_config SET value = '1' WHERE field_name = 'auto_report_stats';
+UPDATE redcap_config SET value = '' WHERE field_name = 'bioportal_api_token';
+UPDATE redcap_config SET value = 'http://127.0.0.1:1130/redcap/' WHERE field_name = 'redcap_base_url';
+UPDATE redcap_config SET value = '1' WHERE field_name = 'enable_url_shortener';
+UPDATE redcap_config SET value = 'D/M/Y_12' WHERE field_name = 'default_datetime_format';
+UPDATE redcap_config SET value = ',' WHERE field_name = 'default_number_format_decimal';
+UPDATE redcap_config SET value = '.' WHERE field_name = 'default_number_format_thousands_sep';
+UPDATE redcap_config SET value = '/var/www/html/redcap/hook_functions.php' WHERE field_name = 'hook_functions_file';
+UPDATE redcap_config SET value = '${redcap_version}' WHERE field_name = 'redcap_version'
