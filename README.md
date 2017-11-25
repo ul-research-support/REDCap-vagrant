@@ -1,13 +1,13 @@
 ## Vagrant VM for REDCap
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.814023.svg)](http://dx.doi.org/10.5281/zenodo.814023)
 
-#### The Vagrantfile and Puppet manifests provided in this repository will allow you to create a virtual machine to run a HIPAA-compliant fully-functional encrypted REDCap instance.
+#### The Startup scripts and Vagrantfile (in conjunction with the Puppet manifest) provided in this repository will allow you to create a virtual machine to run a fully-functional and HIPAA-compliant encrypted REDCap instance.
 
 ### Installation instructions:
 To use this software you will need the latest version of [Vagrant](https://www.vagrantup.com/downloads.html) and the 
 latest version of [VirtualBox](https://www.virtualbox.org/wiki/Downloads). You will also need the VirtualBox Extension Pack corresponding to your VirtualBox version.
 
-1. Download the REDCap-vagrant-master ZIP file from GitHub and extract it on your computer
+1. Download the REDCap-vagrant-master ZIP file from this GitHub repository and extract it on your computer, or `git clone` this repository onto your computer
 
 2. Place your REDCap installation folder in your newly-downloaded REDCap-vagrant-master folder
 
