@@ -3,18 +3,6 @@ PASSWORD_ID_PATH = ".password_id"
 
 # You must install the Oracle VM VirtualBox Extension Pack for drive encryption
 # Credit for drive encryption in Ruby goes to GitHub user gabrielelana
-# Make sure to have installed vagrant-triggers plugin
-# > vagrant plugin install vagrant-triggers
-# After the first `vagrant up` stop the VM and execute the following steps
-# Take the identifier of the storage you want to encrypt
-# > HDD_UUID=`VBoxManage showvminfo <VM_NAME> | grep 'SATA.*UUID' | sed 's/^.*UUID: \(.*\))/\1/'`
-# Store your usernname (whitespaces are not allowed) in a variable
-# > USERNAME="<YOUR_USER_NAME_WITHOUT_WHITESPACES>"
-# Encrypt the storage, enter the password when asked
-# > VBoxManage encryptmedium $HDD_UUID --newpassword - --newpasswordid $USERNAME --cipher "AES-XTS256-PLAIN64"
-# Store the username in a file named .password_id
-# > echo $USERNAME > .password_id
-# Now, the next time you start the VM you'll be asked for the same password
 
 Vagrant.configure("2") do |config|
 
