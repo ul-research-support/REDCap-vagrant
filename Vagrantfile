@@ -53,34 +53,6 @@ Vagrant.configure("2") do |config|
 
    # if File.exists?(PASSWORD_ID_PATH)
     config.vm.network "forwarded_port", guest: 80, host: 1130
-    config.vm.provision :shell do |shell|
-      shell.inline = "sudo apt-get update -y
-                      sudo apt-get upgrade -y
-                      sudo mkdir -p /etc/puppet/modules
-                      sudo puppet module install puppetlabs/stdlib
-                      sudo apt-get install apache2 -y
-                      sudo apt-get install unzip -y
-                      sudo unzip /vagrant/redcap*.zip -d /var/www/html
-                      cd /var/www/html/redcap/redcap_v*; r_v=${PWD##*/}; redcap_version=$(echo $r_v | awk -F\"v\" '{ print $2 }')
-                      echo $redcap_version > /vagrant/rv.txt
-                      sudo puppet apply /vagrant/manifests/manifest.pp
-                      redcap_version=$(cat /vagrant/rv.txt)
-                      /usr/bin/mysql -u redcap_user -predcapDBpassword redcap < /var/www/html/redcap/redcap_v${redcap_version}/Resources/sql/install.sql
-                      /usr/bin/mysql -u redcap_user -predcapDBpassword redcap < /var/www/html/redcap/redcap_v${redcap_version}/Resources/sql/install_data.sql
-                      /usr/bin/mysql -u redcap_user -predcapDBpassword redcap -e \"UPDATE redcap_config SET value = 'sha512' WHERE field_name = 'password_algo';
-                      UPDATE redcap_config SET value = '' WHERE field_name = 'redcap_csrf_token';
-                      UPDATE redcap_config SET value = '0' WHERE field_name = 'superusers_only_create_project';
-                      UPDATE redcap_config SET value = '1' WHERE field_name = 'superusers_only_move_to_prod';
-                      UPDATE redcap_config SET value = '1' WHERE field_name = 'auto_report_stats';
-                      UPDATE redcap_config SET value = '' WHERE field_name = 'bioportal_api_token';
-                      UPDATE redcap_config SET value = 'http://127.0.0.1:1130/redcap/' WHERE field_name = 'redcap_base_url';
-                      UPDATE redcap_config SET value = '1' WHERE field_name = 'enable_url_shortener';
-                      UPDATE redcap_config SET value = 'D/M/Y_12' WHERE field_name = 'default_datetime_format';
-                      UPDATE redcap_config SET value = ',' WHERE field_name = 'default_number_format_decimal';
-                      UPDATE redcap_config SET value = '.' WHERE field_name = 'default_number_format_thousands_sep';
-                      UPDATE redcap_config SET value = '/var/www/html/redcap/hook_functions.php' WHERE field_name = 'hook_functions_file';\"
-                      /usr/bin/mysql -u redcap_user -predcapDBpassword redcap -e \"UPDATE redcap_config SET value = '${redcap_version}' WHERE field_name = 'redcap_version' \"
-                      rm -rf /vagrant/rv.txt"
-    end
+    config.vm.provision "shell", path: "redcap-install/scripts/install.sh"
    # end
 end
