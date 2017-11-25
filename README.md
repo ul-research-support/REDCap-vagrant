@@ -9,13 +9,13 @@ latest version of [VirtualBox](https://www.virtualbox.org/wiki/Downloads). You w
 
 1. Download the REDCap-vagrant-master ZIP file from GitHub and extract it on your computer
 
-2. Place your REDCap installation folder in your newly-downloaded REDCap-vagrant-master folder and change the Vagrantfile to match your REDCap folder version
+2. Place your REDCap installation folder in your newly-downloaded REDCap-vagrant-master folder
 
 3. Open your Terminal or Command Prompt, and change your directory to the project root 
 
 4. Run either the startup.sh script or the startup.bat script with `sudo ./startup.sh`, or `startup.bat` respectively.
 
-#### Special note for Windows users: You will need to enter in your Windows username when prompted as well as the Hard Disk UUID of the virtual machine when prompted. The UUID will be shown to you, but you must make sure to enter in the Hard Disk UUID and not the Machine UUID.
+#### Special note for Windows users: You will need to enter in your Windows username when prompted as well as the Hard Disk UUID of the virtual machine when prompted. The UUID will be shown to you, but you must make sure to enter in the Hard Disk or Image UUID and not the Machine UUID. If you are stuck, enter in the Image UUID located directly above the prompt.
 
 Vagrant will download the base box and prompt you for a password to encrypt the hard drive. The default username is `redcap_user`. Vagrant will run the Puppet provisioner to install Apache2, MySQL, PHP, necessary extensions, as well as set up the REDCap database users and tables.
 
