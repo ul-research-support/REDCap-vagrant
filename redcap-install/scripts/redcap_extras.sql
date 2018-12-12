@@ -10,4 +10,4 @@ UPDATE redcap_config SET value = 'D/M/Y_12' WHERE field_name = 'default_datetime
 UPDATE redcap_config SET value = ',' WHERE field_name = 'default_number_format_decimal';
 UPDATE redcap_config SET value = '.' WHERE field_name = 'default_number_format_thousands_sep';
 UPDATE redcap_config SET value = '/var/www/html/redcap/hook_functions.php' WHERE field_name = 'hook_functions_file';
-UPDATE redcap_config SET value = '${redcap_version}' WHERE field_name = 'redcap_version'
+UPDATE redcap_config SET value = 'redcap_version_token' WHERE field_name = 'redcap_version';

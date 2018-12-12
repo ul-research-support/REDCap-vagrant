@@ -56,6 +56,7 @@ Vagrant.configure("2") do |config|
                       redcap_version=$(cat /vagrant/redcap-install/rv.txt)
                       /usr/bin/mysql -u redcap_user -predcapDBpassword redcap < /var/www/html/redcap/redcap_v${redcap_version}/Resources/sql/install.sql
                       /usr/bin/mysql -u redcap_user -predcapDBpassword redcap < /var/www/html/redcap/redcap_v${redcap_version}/Resources/sql/install_data.sql
+                      sed -i \"s/redcap_version_token/$redcap_version/g\" \"/vagrant/redcap-install/scripts/redcap_extras.sql\"
                       /usr/bin/mysql -u redcap_user -predcapDBpassword redcap < /vagrant/redcap-install/scripts/redcap_extras.sql
                       rm -rf /vagrant/redcap-install/rv.txt"
     end
