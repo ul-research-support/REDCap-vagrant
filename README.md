@@ -13,7 +13,7 @@ latest version of [VirtualBox](https://www.virtualbox.org/wiki/Downloads). You w
 
 3. Open your Terminal or Command Prompt, and change your directory to the project root 
 
-4. Run either the startup.sh script or the startup.bat script with `./startup.sh`, or `startup.bat` respectively.
+4. Run either the startup.sh script or the startup.bat script with `sudo ./startup.sh`, or `startup.bat` respectively.  NB: On OS X appears not to require sudo and can be run with `bash ./startup.sh`.
 
 #### Special note for Windows users: You will need to enter in your Windows username when prompted as well as the Hard Disk UUID of the virtual machine when prompted. The UUID will be shown to you, but you must make sure to enter in the Hard Disk or Image UUID and not the Machine UUID. If you are stuck, enter in the Image UUID located directly above the prompt.
 
